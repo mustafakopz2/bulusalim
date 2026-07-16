@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buluşalım — Resmi Tanıtım Videosu (Cinematic Showcase)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #07070e;
+      --accent-orange: #FF5C5C;
+      --accent-coral: #FF8C42;
+      --text-main: #FFFFFF;
+      --text-muted: rgba(255, 255, 255, 0.65);
+      --glass-bg: rgba(255, 255, 255, 0.06);
+      --glass-border: rgba(255, 255, 255, 0.12);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* Ambient Background Glows */
+    .ambient-glow {
+      position: absolute;
+      width: 60vw;
+      height: 60vw;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.25;
+      pointer-events: none;
+      z-index: 0;
+      transition: all 2s ease;
+    }
+    .glow-1 {
+      top: -15%;
+      left: -10%;
+      background: radial-gradient(circle, #FF5C5C, transparent);
+    }
+    .glow-2 {
+      bottom: -20%;
+      right: -10%;
+      background: radial-gradient(circle, #FF8C42, transparent);
+    }
+
+    /* Cinema Container */
+    .cinema-viewport {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 10;
+    }
+
+    /* Top Cinema Bar */
+    .cinema-header {
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 30;
+    }
+
+    .brand-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      padding: 8px 18px;
+      border-radius: 100px;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #FF5C5C, #FF8C42);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -0.3px;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #FF8C42;
+      background: rgba(255, 140, 66, 0.12);
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: 1px solid rgba(255, 140, 66, 0.3);
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #FF5C5C;
+      box-shadow: 0 0 10px #FF5C5C;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.5; }
+    }
+
+    /* Scenes Stage */
+    .stage {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .scene {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.96);
+      transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .scene.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    /* Scene Layouts */
+    .scene-content {
+      max-width: 1200px;
+      width: 90%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 60px;
+      z-index: 20;
+    }
+
+    .scene-content.center {
+      grid-template-columns: 1fr;
+      text-align: center;
+      max-width: 860px;
+    }
+
+    .scene-tag {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #FF5C5C, #FF8C42);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+    }
+
+    .scene-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      margin-bottom: 24px;
+    }
+
+    .scene-title span {
+      background: linear-gradient(90deg, #FF5C5C, #FF8C42);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .scene-desc {
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      font-weight: 400;
+    }
+
+    /* Interactive Phone Mockup */
+    .phone-showcase {
+      position: relative;
+      width: 320px;
+      height: 640px;
+      margin: 0 auto;
+      background: #12121e;
+      border-radius: 44px;
+      border: 8px solid #232336;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 50px rgba(255,92,92,0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone-notch {
+      width: 120px;
+      height: 24px;
+      background: #232336;
+      margin: 0 auto;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 50;
+    }
+
+    .phone-screen {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow: hidden;
+      background: #0f0f1a;
+    }
+
+    /* Mockup UI Elements */
+    .mock-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      animation: floatUp 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-8px); }
+    }
+
+    .mock-img {
+      width: 100%;
+      height: 140px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+
+    .mock-badge {
+      align-self: flex-start;
+      background: linear-gradient(135deg, #FF5C5C, #FF8C42);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 100px;
+    }
+
+    /* Subtitle & Audio Bar */
+    .cinema-footer {
+      padding: 28px 40px;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: linear-gradient(to top, rgba(7,7,14,0.95), transparent);
+    }
+
+    .subtitle-box {
+      text-align: center;
+      min-height: 28px;
+    }
+
+    .subtitle-text {
+      font-size: 16px;
+      font-weight: 500;
+      color: #FFF;
+      background: rgba(0,0,0,0.6);
+      padding: 6px 18px;
+      border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.1);
+      display: inline-block;
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .btn-play {
+      background: linear-gradient(135deg, #FF5C5C, #FF8C42);
+      border: none;
+      color: white;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(255,92,92,0.4);
+      transition: transform 0.2s;
+    }
+    .btn-play:hover { transform: scale(1.08); }
+
+    .progress-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 100px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #FF5C5C, #FF8C42);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    .scene-indicators {
+      display: flex;
+      gap: 8px;
+    }
+
+    .scene-dot {
+      width: 28px;
+      height: 6px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .scene-dot.active {
+      background: #FF8C42;
+      width: 44px;
+    }
+
+    /* Feature Grid in Scene 3 */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .feature-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      padding: 24px;
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+    }
+    .feature-card h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: #FF8C42;
+    }
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Stat Counter */
+    .stat-box {
+      font-family: 'Outfit', sans-serif;
+      font-size: 72px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #FF5C5C, #FF8C42);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    @media (max-width: 900px) {
+      .scene-content { grid-template-columns: 1fr; gap: 30px; text-align: center; }
+      .phone-showcase { display: none; }
+      .scene-title { font-size: 36px; }
+      .cinema-header, .cinema-footer { padding: 16px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <div class="cinema-viewport">
+    <!-- Header -->
+    <header class="cinema-header">
+      <div class="brand-pill">
+        <div class="brand-logo">B</div>
+        <span class="brand-name">Buluşalım Showcase</span>
+      </div>
+      <div class="status-badge">
+        <div class="live-dot"></div>
+        <span>SİNEMATİK TANITIM</span>
+      </div>
+    </header>
+
+    <!-- Stage (Scenes) -->
+    <main class="stage">
+      
+      <!-- SCENE 1: HOOK -->
+      <section class="scene active" id="scene-0">
+        <div class="scene-content center">
+          <span class="scene-tag">Yerel Deneyim & Yetenek Platformu</span>
+          <h1 class="scene-title">Şehrini Keşfetmenin<br><span>En Sosyal Yolu</span></h1>
+          <p class="scene-desc">Bugün ne yapsam derdine son! Buluşalım, şehrindeki eşsiz atölyeleri, spor gruplarını ve özel rotaları tek ekranda buluşturuyor.</p>
+        </div>
+      </section>
+
+      <!-- SCENE 2: INTERACTIVE EVENTS -->
+      <section class="scene" id="scene-1">
+        <div class="scene-content">
+          <div>
+            <span class="scene-tag">Canlı ve Doğal Etkinlikler</span>
+            <h1 class="scene-title">Sıradan Hafta Sonlarını<br><span>Unutulmaz Kıl</span></h1>
+            <p class="scene-desc">İtalyan pasta yapımından seramik atölyelerine, gün batımı yogasından cumartesi halı saha maçlarına kadar 100'lerce doğrulanmış yerel deneyim.</p>
+          </div>
+          <div class="phone-showcase">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="mock-card">
+                <span class="mock-badge">EN ÇOK SATAN</span>
+                <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&q=80" class="mock-img" alt="Pasta">
+                <h4 style="font-size:15px;">İtalyan Pasta Yapım Atölyesi</h4>
+                <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted);">
+                  <span>📍 Kadıköy Mutfak</span>
+                  <span style="color:#FF5C5C; font-weight:700;">₺1.200</span>
+                </div>
+              </div>
+              <div class="mock-card" style="animation-delay: -2s;">
+                <span class="mock-badge">POPÜLER</span>
+                <img src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&q=80" class="mock-img" alt="Seramik">
+                <h4 style="font-size:15px;">Seramik Atölyesi: İlk Eserin</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCENE 3: ROUTES & CURATED GUIDES -->
+      <section class="scene" id="scene-2">
+        <div class="scene-content">
+          <div class="phone-showcase">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <img src="https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=600&q=80" style="width:100%; height:200px; border-radius:18px; object-fit:cover;" alt="Rota">
+              <div style="padding: 8px;">
+                <span class="mock-badge">HAZIR ROTA</span>
+                <h3 style="margin: 10px 0 4px;">Kadıköy Moda Lezzet Turu</h3>
+                <p style="font-size:12px; color:var(--text-muted);">4 Durak • 5 Saat • Bütçe Planlı</p>
+                <div style="margin-top:16px; background:rgba(255,92,92,0.15); padding:12px; border-radius:12px; border:1px solid rgba(255,92,92,0.3); text-align:center; font-weight:700; color:#FF8C42;">
+                  ✓ Rota Satın Alındı
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <span class="scene-tag">Akıllı Rota Rehberi</span>
+            <h1 class="scene-title">Semt Semt Planlanmış<br><span>Özel Rotalar</span></h1>
+            <p class="scene-desc">Nerede kahvaltı edilir, hangi kahveciye gidilir, gün batımı nerede izlenir? Şehrin yerlilerinin hazırladığı adım adım rotaları anında satın al ve uygula.</p>
+            <div class="feature-grid">
+              <div class="feature-card">
+                <h3>Bütçe Tahmini</h3>
+                <p>Her durakta ne kadar harcayacağını önceden bil.</p>
+              </div>
+              <div class="feature-card">
+                <h3>Tek Tıkla Yol Tarifi</h3>
+                <p>Duraklar arası harita yönlendirmeleri hazır.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCENE 4: LIVE COMMUNITY CHAT -->
+      <section class="scene" id="scene-3">
+        <div class="scene-content">
+          <div>
+            <span class="scene-tag">Canlı Topluluk Deneyimi</span>
+            <h1 class="scene-title">Etkinliğe Katıl,<br><span>Gruptakilerle Tanış</span></h1>
+            <p class="scene-desc">Rezervasyon yaptığın anda etkinlik sohbet grubuna otomatik olarak dahil olursun. Host ve diğer katılımcılarla etkinlik öncesi tanış, sorularını sor.</p>
+          </div>
+          <div style="background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:28px; padding:24px; backdrop-filter:blur(20px);">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px; border-bottom:1px solid var(--glass-border); padding-bottom:14px;">
+              <div class="live-dot"></div>
+              <h3 style="font-size:16px;">İtalyan Pasta Atölyesi — Gruptakiler</h3>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="background:rgba(255,255,255,0.08); padding:12px 16px; border-radius:16px;">
+                <strong style="color:#FF8C42; font-size:13px;">Elif Kaya (Host):</strong>
+                <p style="font-size:14px; margin-top:4px;">Herkese merhaba! Malzemeler hazır, yarın 14:00'da görüşüyoruz 🎂</p>
+              </div>
+              <div style="background:rgba(255,92,92,0.15); padding:12px 16px; border-radius:16px; align-self:flex-end;">
+                <strong style="color:#FFF; font-size:13px;">Sen:</strong>
+                <p style="font-size:14px; margin-top:4px;">Çok heyecanlıyım! Orada görüşmek üzere 🎉</p>
+              </div>
+              <div style="background:rgba(255,255,255,0.08); padding:12px 16px; border-radius:16px;">
+                <strong style="color:#FF8C42; font-size:13px;">Ali Koçak:</strong>
+                <p style="font-size:14px; margin-top:4px;">Ben de katılıyorum, harika bir ekip olduk 😊</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCENE 5: MONETIZE / HOST -->
+      <section class="scene" id="scene-4">
+        <div class="scene-content center">
+          <span class="scene-tag">Sen De Kazan</span>
+          <h1 class="scene-title">Yeteneğini Paylaş,<br><span>Gelir Elde Et</span></h1>
+          <p class="scene-desc">İster ev yapımı makarna workshop'u ver, ister semtinin en iyi rotasını oluştur. Buluşalım Host'u ol ve binlerce aktif kullanıcıya ulaş.</p>
+          <div class="stat-box">₺18.500+</div>
+          <p style="color:var(--text-muted); font-size:14px; margin-top:8px;">Ortalama Aylık Aktif Host Kazancı</p>
+        </div>
+      </section>
+
+      <!-- SCENE 6: CALL TO ACTION -->
+      <section class="scene" id="scene-5">
+        <div class="scene-content center">
+          <div class="brand-logo" style="width:64px; height:64px; font-size:32px; margin:0 auto 20px;">B</div>
+          <h1 class="scene-title">Deneyimi Başlatmaya<br><span>Hazır mısın?</span></h1>
+          <p class="scene-desc">Arkadaşlarını davet et, rotaları keşfet ve şehrin tadını çıkar.</p>
+          <div style="display:flex; justify-content:center; gap:16px; margin-top:12px;">
+            <a href="index.html" style="background:linear-gradient(135deg, #FF5C5C, #FF8C42); color:white; padding:16px 36px; border-radius:100px; text-decoration:none; font-weight:700; font-size:16px; box-shadow:0 10px 30px rgba(255,92,92,0.4);">Uygulamaya Git</a>
+            <a href="sunum.html" style="background:var(--glass-bg); border:1px solid var(--glass-border); color:white; padding:16px 36px; border-radius:100px; text-decoration:none; font-weight:700; font-size:16px;">Yatırımcı Sunumu</a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer Controls & Subtitle -->
+    <footer class="cinema-footer">
+      <div class="subtitle-box">
+        <div class="subtitle-text" id="subtitle">"Buluşalım, şehrindeki eşsiz atölyeleri ve rotaları tek ekranda buluşturuyor."</div>
+      </div>
+
+      <div class="controls-bar">
+        <button class="btn-play" id="playToggle">
+          <svg id="iconPause" width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+          <svg id="iconPlay" width="20" height="20" viewBox="0 0 24 24" fill="white" style="display:none;"><path d="M6 4L20 12L6 20V4Z"/></svg>
+        </button>
+
+        <div class="progress-track" id="progressTrack">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="scene-indicators" id="indicators">
+          <div class="scene-dot active" data-index="0"></div>
+          <div class="scene-dot" data-index="1"></div>
+          <div class="scene-dot" data-index="2"></div>
+          <div class="scene-dot" data-index="3"></div>
+          <div class="scene-dot" data-index="4"></div>
+          <div class="scene-dot" data-index="5"></div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const SCENES = [
+      { id: 'scene-0', duration: 6000, subtitle: '"Buluşalım, şehrindeki eşsiz atölyeleri ve rotaları tek ekranda buluşturuyor."' },
+      { id: 'scene-1', duration: 6500, subtitle: '"İtalyan pastadan halı saha maçına, 100\'lerce doğrulanmış yerel deneyim."' },
+      { id: 'scene-2', duration: 6500, subtitle: '"Yerlilerin hazırladığı adım adım rotalarla nereye gideceğini önceden bil."' },
+      { id: 'scene-3', duration: 6000, subtitle: '"Rezervasyon anında sohbet grubuna katıl, host ve diğer katılımcılarla tanış."' },
+      { id: 'scene-4', duration: 5500, subtitle: '"Sen de kendi atölyeni veya rotanı ekle, yeteneğini gelire dönüştür."' },
+      { id: 'scene-5', duration: 6000, subtitle: '"Buluşalım: Şehrini keşfetmenin en sosyal yolu."' }
+    ];
+
+    let currentSceneIndex = 0;
+    let isPlaying = true;
+    let sceneStartTime = Date.now();
+    let animationFrame;
+
+    const scenesEl = document.querySelectorAll('.scene');
+    const dotsEl = document.querySelectorAll('.scene-dot');
+    const subtitleEl = document.getElementById('subtitle');
+    const progressFill = document.getElementById('progressFill');
+    const playToggle = document.getElementById('playToggle');
+    const iconPlay = document.getElementById('iconPlay');
+    const iconPause = document.getElementById('iconPause');
+
+    function showScene(index) {
+      currentSceneIndex = index;
+      sceneStartTime = Date.now();
+
+      scenesEl.forEach((el, idx) => {
+        el.classList.toggle('active', idx === index);
+      });
+
+      dotsEl.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === index);
+      });
+
+      subtitleEl.style.opacity = 0;
+      setTimeout(() => {
+        subtitleEl.textContent = SCENES[index].subtitle;
+        subtitleEl.style.opacity = 1;
+      }, 300);
+    }
+
+    function tick() {
+      if (!isPlaying) return;
+
+      const elapsed = Date.now() - sceneStartTime;
+      const currentDuration = SCENES[currentSceneIndex].duration;
+      const sceneProgress = Math.min(100, (elapsed / currentDuration) * 100);
+
+      // Overall Progress Calculation
+      const totalDuration = SCENES.reduce((acc, s) => acc + s.duration, 0);
+      let passedDuration = 0;
+      for (let i = 0; i < currentSceneIndex; i++) {
+        passedDuration += SCENES[i].duration;
+      }
+      const overallPercent = ((passedDuration + elapsed) / totalDuration) * 100;
+      progressFill.style.width = overallPercent + '%';
+
+      if (elapsed >= currentDuration) {
+        const nextIdx = (currentSceneIndex + 1) % SCENES.length;
+        showScene(nextIdx);
+      }
+
+      animationFrame = requestAnimationFrame(tick);
+    }
+
+    playToggle.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      if (isPlaying) {
+        iconPlay.style.display = 'none';
+        iconPause.style.display = 'block';
+        sceneStartTime = Date.now();
+        tick();
+      } else {
+        iconPlay.style.display = 'block';
+        iconPause.style.display = 'none';
+        cancelAnimationFrame(animationFrame);
+      }
+    });
+
+    dotsEl.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const idx = parseInt(dot.getAttribute('data-index'));
+        showScene(idx);
+      });
+    });
+
+    // Start Showcase
+    showScene(0);
+    tick();
+  </script>
+</body>
+</html>
